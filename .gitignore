@@ -33,3 +33,6 @@ build/
 .vscode/
 
 /uploadsEstaticas/
+application.properties
+application-production.properties
+schema.graphqls
