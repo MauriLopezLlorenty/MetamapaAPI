@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+left to right direction
+
+
+:Administrador: as Admin
+:Contribuyente: as Cont
+:Visualisador: as Vis
+
+
+(Crear Coleccion) as (CC)
+(Importar Hechos Cvs) as (IHC)
+(Gestion de Solicitud) as (GS)
+(Agregar Hecho) as (AH)
+(Solicitud de Eliminacion de Hecho) as (SEH)
+(Ver Hechos de Coleccion) as (VH)
+(Identificarse) as (ID)
+(Filtrar) as (F)
+
+
+Admin -down-> (CC)
+Admin -down-> (IHC)
+Admin -down-> (GS)
+Admin -down-> (AH)
+Admin -down-> (SEH)
+Admin -down-> (VH)
+
+(F) .right.> (VH) : <<EXTENDS>>
+Cont -up-> (AH)
+Cont -up-> (SEH)
+Cont -up-> (VH)
+Cont -up-> (ID)
+
+Vis -up-> (VH)
+Vis -up-> (ID)
+
+
+@enduml

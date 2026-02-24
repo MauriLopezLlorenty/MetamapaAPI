@@ -1,0 +1,189 @@
+@startuml
+
+
+class Coleccion {
+    -handle:String
+    -nombreColeccion: String
+    -fuente: Fuente
+    -criterios:List<CriterioPertenencia>
+    -descripcion: String
+    -hechos: List<Hecho>
+    -consenso: AlgoritmoConsenso
+    +cargarHechosDesdeFuente():void
+    +agregarCriterio(CriterioPertenencia):void
+    +agregarHecho(Hecho):void
+    -imprimirHechos(List<Hecho>):void
+    +filtrarHechos(List<Hecho>):List<Hecho>
+    +visualizarHechos():void
+    +visualizarFiltrarHechos():void
+
+}
+
+Coleccion-->CriterioPertenencia
+
+interface CriterioPertenencia{
+    +cumple(Hecho): boolean
+}
+class CriterioCategoria implements CriterioPertenencia{
+    -Categoria: String
+    +cumple(Hecho): boolean
+}
+
+Coleccion-->AlgoritmoConsenso
+interface AlgoritmoConsenso{
+    +esConsensuado(Hecho): boolean
+}
+
+class AlgoritmoBasico implements AlgoritmoConsenso{}
+class ConsensoAbsoluto implements AlgoritmoConsenso{}
+class MayoriaSimple implements AlgoritmoConsenso{}
+class MultiplesMenciones implements AlgoritmoConsenso{}
+
+Coleccion --> Hecho
+class Hecho {
+    -titulo: String
+    -descripcion: String
+    -archivoMultimedia: String
+    -categoria: Categoria
+    -lugar: Lugar
+    -fechaDelHecho: LocalDate
+    -fechaDeCarga: LocalDate
+    -origen: Origen
+    -visible: Bool
+    -editalbe: Bool
+    -contribuyente: Usuario
+    +agregarEtiqueta(Etiqueta):void
+}
+Hecho --> Categoria
+class Categoria{
+    -nombre: String
+}
+
+Hecho --> Origen
+enum Origen{
+    MANUAL
+    DATASET
+    CONTRIBUYENTE
+}
+
+
+Hecho-->Usuario
+class Usuario {
+    -nombre: String
+    -apellido: String
+    -Edad: Integer
+
+}
+
+Hecho --> Lugar
+class Lugar {
+    -latitud: double
+    -longitud: double
+    +sonIguales(Lugar)
+}
+
+SolicitudDeEliminacion-->Hecho
+class SolicitudDeEliminacion {
+    -hecho: Hecho
+    -motivo: String
+    -estado: EstadoSolicitud
+    -fechaSolicitud: LocalDateTime
+    -fechaEstado: LocalDateTime
+    -esSpam: boolean
+    -validarMotivo(String):void
+    +aceptar(): void
+    +rechazar(): void
+}
+SolicitudDeModificacion -->Hecho
+class SolicitudDeModificacion{
+    -hecho: Hecho
+    -estado: EstadoSolicitud
+    -fechaSolicitud: LocalDateTime
+    -fechaEstado: LocalDateTime
+    +aceptar(): void
+    +rechazar(): void
+}
+SolicitudDeEliminacion-->DetectorDeSpam
+
+
+interface DetectorDeSpam{
+    +esSpam:boolean
+}
+class DetectorBasico implements DetectorDeSpam{}
+class DetectorTFIDF implements DetectorDeSpam{}
+SolicitudDeEliminacion --> EstadoSolicitud
+enum EstadoSolicitud{
+    PENDIENTE
+    RECHAZADA
+    ACEPTADA
+}
+
+
+Coleccion --> Fuente
+interface Fuente{
+    +obtenerHechos(): List<Hecho>
+}
+
+class FuenteEstatica implements Fuente{
+    -loteAsociado: DataSet
+    -ruta: String
+    +obtenerHechos(): List<Hecho>
+}
+class FuenteDinamica implements Fuente{
+    +obtenerHechos(): List<Hecho>
+}
+class FuenteProxy implements Fuente{
+
+}
+
+FuenteEstatica --> DataSet
+
+interface DataSet{
+    +leerArchivo(rutaArchivo: String): List<Hecho>
+}
+
+class DatasetCSV implements DataSet{
+    +leerArchivo(rutaArchivo: String): List<Hecho>
+}
+
+interface FiltroHecho {
+ +aplicaA(hecho:Hecho):Bool
+}
+
+Coleccion --> FiltroHecho
+class FiltrarPorLugar implements FiltroHecho{
+    -lugarBuscado: Lugar
+}
+class FiltrarPorCategoria implements FiltroHecho{
+    -categoria: String
+}
+class FiltrarPorEtiquetas implements FiltroHecho{
+    -filtroEtiqueta: String
+}
+class FiltrarPorTitulo implements FiltroHecho{
+    -titulo: String
+}
+class FiltrarPorVisible implements FiltroHecho{
+}
+class FiltrarPorFechaDeCarga implements FiltroHecho{
+    -fDesde: LocalDate
+    -fHasta: LocalDate
+}
+class FiltrarPorFechaDeHecho implements FiltroHecho{
+    -fDesde: LocalDate
+    -fHasta: LocalDate
+}
+class FiltroPorOrigen implements FiltroHecho{
+    -origenBuscado: Origen
+}
+class FiltroCompuesto implements FiltroHecho{
+    -filtros: List<FiltroHecho>
+}
+
+Hecho --> Etiqueta
+class Etiqueta{
+ -nombre: String
+}
+
+
+@enduml
